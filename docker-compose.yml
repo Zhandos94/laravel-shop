@@ -9,13 +9,11 @@ services:
     container_name: shop-backend
     restart: unless-stopped
     tty: true
-    ports:
-      - "8181:80"
     environment:
       SERVICE_TAGS: dev
-    working_dir: /var/www
+    working_dir: /var/www/sites/shop/
     volumes:
-      - ./backend/:/var/www
+      - ./backend/:/var/www/sites/shop/
       - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - app-network
@@ -27,10 +25,9 @@ services:
     restart: unless-stopped
     tty: true
     ports:
-      - "80:80"
-      - "443:443"
+      - "8181:80"
     volumes:
-      - ./backend/:/var/www
+      - ./backend/:/var/www/sites/shop/
       - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
     networks:
       - app-network
