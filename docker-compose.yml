@@ -18,6 +18,24 @@ services:
     networks:
       - app-network
 
+  # Frontend
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+    container_name: shop-frontend
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
+    working_dir: /app
+    volumes:
+      - ./frontend/:/app/
+      - "/app/node_modules"
+    ports:
+      - '8080:8080'
+    networks:
+      - app-network
+
   #Nginx Service
   webserver:
     image: nginx:alpine
