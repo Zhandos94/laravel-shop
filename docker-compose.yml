@@ -1,20 +1,20 @@
 version: '3'
 services:
 
-  #PHP Service
-  backend:
+  #Api Service
+  api:
     build:
-      context: docker/backend
+      context: docker/api
     image: digitalocean.com/php
-    container_name: shop-backend
+    container_name: shop-api
     restart: unless-stopped
     tty: true
     environment:
       SERVICE_TAGS: dev
     working_dir: /var/www/sites/shop/
     volumes:
-      - ./backend/:/var/www/sites/shop/
-      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./api/:/var/www/sites/shop/
+      - ./docker/api/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - app-network
 
@@ -32,20 +32,20 @@ services:
       - ./frontend/:/app/
       - "/app/node_modules"
     ports:
-      - '8080:8080'
+      - '8182:8080'
     networks:
       - app-network
 
-  #Nginx Service
-  webserver:
+  #Nginx for api Service
+  api-nginx:
     image: nginx:alpine
-    container_name: shop-webserver
+    container_name: api-nginx
     restart: unless-stopped
     tty: true
     ports:
-      - "8181:80"
+      - "8282:80"
     volumes:
-      - ./backend/:/var/www/sites/shop/
+      - ./api/:/var/www/sites/shop/
       - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
     networks:
       - app-network
@@ -68,6 +68,23 @@ services:
       - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
     networks:
       - app-network
+
+  #Broker message Service
+#  rabbitmq:
+#    image: rabbitmq:3.7.17-management
+#    container_name: rabbitmq
+#    environment:
+#      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+#      RABBITMQ_DEFAULT_USER: "rabbitmq"
+#      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+#      RABBITMQ_DEFAULT_VHOST: "/"
+#    ports:
+#      - "15672:15672"
+#      - "5672:5672"
+#    volumes:
+#      - ./docker/rabbit/enabled_plugins:/etc/rabbitmq/enabled_plugins
+#    networks:
+#      - app-network
 
 #Docker Networks
 networks:

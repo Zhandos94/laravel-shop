@@ -17,14 +17,20 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     curl \
-    telnet \
-    vim \
     && pecl install xdebug \
-    docker-php-ext-enable xdebug
+    docker-php-ext-enable xdebug \
+    && docker-php-ext-install bcmath sockets
 
 
 # Copy xdebug.ini
 COPY xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
+# Install composer
+RUN curl -sS https://getcomposer.org/installer | php -- \
+        --filename=composer \
+        --install-dir=/usr/local/bin && \
+        echo "alias composer='composer'" >> /root/.bashrc && \
+        composer
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
